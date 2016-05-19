@@ -15,7 +15,15 @@
     "idoc": {
         "theme": "default",
         "md": [
-            "index.md"
+            "首页.md",
+            {
+                "node": []
+            },
+            {
+                "工具": [
+                    "babel.md"
+                ]
+            }
         ]
     }
 }
