@@ -1,62 +1,55 @@
-#(以下是自己的理解，如果有错误请提出改正，谢谢!)
+# babel的使用
 
-##1.nodejs可以直接访问的变量
-```
-__dirname ,__filename ,exports ,require, module 还有global下面所有的变量
-```
-##2.I/O读写速度
-1. cpu > 内存 > 硬盘 > 光盘 > 网络请求
+##1. babel的介绍
+1. <a href="http://babeljs.io/" style="color:red">babel是什么</a>
+2. babel是javascript的编译器，代码到代码的编译(es6/es7编译成es5)
 
-##3.同步执行and异步执行
-1. 同步执行:cup执行任务的时候，安装顺序执行，前面任务执行了，后面的任务才能别执行，如果前面的任务执行时间比较长的话，后面的任务就一直等着
-2. 异步执行:cup跳过需要等待很长时间的任务，执行后面的任务
+##2. `babel`命令行的具体使用
+1. 安装babel的终端 `npm install babel-cli --global`
+2. 如果项目中使用建议安装在项目里面`npm install babel-cli --save-dev`
+2. `babel src.js -o(--out-file) build.js` 把src.js文件编译到build.js文件里面
+3. `babel src -d (--out-dir) build` 把src目录下面的所有的文件编译到build目录下面
+4. 更多的命令通过`babel --help`查看
 
+##3. 项目根目录新建`.babelrc`文件，里面放入配置文件
+1. 预设presets是一些插件的组合，比如`babel-preset-2015`
+2. 如果需要支持es6语法的话，先安装`npm install babel-preset-2015 --save-dev` 然后在`presets`添加`es2015`
+3. plugins插件,babel6.0以上做了调整，bable都是通过plugin来编译代码的
 
-##4.js异步执行的运行机制
-1. js主线程是单线程的,程序执行的时候会形成`执行栈`,当遇到异步任务的时候，会把异步任务放到任务队列(事件队列)里面,当执行栈任务执行完的时候，开始执行任务队列，这个过程是循环的，称为`事件循环`
+<pre>
+{
+    "presets":["es2015","react"],
+    "plugins": ["transform-es2015-arrow-functions"]
+}
+</pre>
+##4. 在`package.json`里面的`scripts`里面配置运行脚本然后通过`npm run + 命令`去执行(可以节省代码的书写量)
 
-##5.node里面的require查找规则
-###当没有以绝对路径或相对路径来指向文件的时候，那么这个加载的模块要么是内置模块要么是第三方模块(在node_modules)
-###当查找内置模块或者第三方模块的时候，执行的步骤如下
-1. 先在内置模块里面查找，找不到按照下面方式去查找
-2. 获取module.paths里面的第一个目录查找
-3. 尝试添加.js, .json文件进行查找
-4. 如果还是找不到，会尝试将require的参数当成包来查找,查找package.json文件里面的main属性对应的模块，如果有该模块的话直接获取该模块;如果没有的话,在该包下面尝试查找index.js,index.json
-5. 如果还是找不到的话，会继续查找module.paths里面的下一个目录，当所有的目录都找完了，还是找不到的话，就会报错
+<pre>
+ "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/babel  src -wd build",
+    "dev": "./node_modules/.bin/gulp"
+  }
+</pre>
 
-##6.nodejs中exports和module.exports的区别
-1. node帮我们实现了exports = module.exports = {}
-2. 当加载模块的时候，模块执行完返回的结果就是module.exports
-3. 如果直接在exports或module.exports添加属性或者的时候，是没有区别的
-4. 如果改变exports的值或者引用地址的时候，这个时候exports就不等于module.exports,
+##5. `babel`在项目里面一般不是单独去用的，因为项目里面还有`less`文件的编译，所以一般配合`gulp`或者`webpack`去使用
+#### `babel+gulp`的使用
+1. 需要在根目录下面新建gulpfile.js文件
+2. `npm install gulp gulp-babel --save`安装gulp和gulp-babel
+3. gulp-babel就是babel的核心代码，它会去根目录查找.babelrc配置文件,如果没有这个配置文件的话，我们在调用的时候就要传入相应的预设或者插件
+4. 在package.json文件scripts里面配置`"dev:./node_modules/.bin/gulp"`,运行`npm run dev`
 
-##7.自定义一个npm包并且发布到npm官网上面去
-1. 新建一个新的`github`仓库，把本地自定义的包推到远程仓库
-2. 在自定义包里面执行`npm init`新建package.json文件;
-3. npm publish发布自己的包
-4. 如果发布成功的话，就可以在项目里面以第三方模块的方式安装了
+<pre>
+var gulp = require('gulp');
+var babel = require('gulp-babel');
 
-> 注意: name名称不能包含大写字母和中文，最好起特殊意义的名字，确保此包在官网没有被注册过，不然会报错; 每次发布的时候`npm publish`的时候，version一定要确保比之前的版本大
-> 此过程可能会遇到一些问题:确保自己使用的npm镜像是npm官网的; 确保自己已经注册了npm用户,并且命令行已经登录了(具体步骤百度)
+gulp.task('babel', function(){
+    gulp.src('src/*.js')
+    .pipe(babel())
+    .pipe(gulp.dest('build'))
+})
 
-##8.进程和线程的关系
-1. 进程是应用程序在处理机上面的一次运行过程，线程是进程的一部分，一个进程包含多个线程在运行
-
-##9.异步和同步
-1. 异步就是任务不连续执行
-2. 同步就是任务连续执行
-
-##10.我们的天气真的不错啊
-
-
-
-
-
-
-
-
-
-
-
+gulp.task('default', ['babel']);
+</pre>
 
 
