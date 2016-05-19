@@ -1,3 +1,13 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
 <h1 id="babel的使用">babel的使用</h1>
 <h2 id="babel的介绍">1. babel的介绍</h2>
 <ol style="list-style-type: decimal">
@@ -18,13 +28,11 @@
 <li>如果需要支持es6语法的话，先安装<code>npm install babel-preset-2015 --save-dev</code> 然后在<code>presets</code>添加<code>es2015</code></li>
 <li>plugins插件,babel6.0以上做了调整，bable都是通过plugin来编译代码的</li>
 </ol>
-<pre style="background:black; color:red;">
-```
-	{
-	    "presets":["es2015","react"],
-	    "plugins": ["transform-es2015-arrow-functions"]
-	}
-```
+<pre>
+{
+    "presets":["es2015","react"],
+    "plugins": ["transform-es2015-arrow-functions"]
+}
 </pre>
 <h2 id="在package.json里面的scripts里面配置运行脚本然后通过npm-run-命令去执行可以节省代码的书写量">4. 在<code>package.json</code>里面的<code>scripts</code>里面配置运行脚本然后通过<code>npm run + 命令</code>去执行(可以节省代码的书写量)</h2>
 <pre>
@@ -54,3 +62,5 @@ gulp.task('babel', function(){
 
 gulp.task('default', ['babel']);
 </pre>
+</body>
+</html>
